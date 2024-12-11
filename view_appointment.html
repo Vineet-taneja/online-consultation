@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Appointment</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .appointment-details {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .appointment-details h2 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .appointment-info {
+            margin-bottom: 30px;
+            font-size: 18px;
+            color: #7f8c8d;
+        }
+
+        .appointment-info strong {
+            color: #2c3e50;
+        }
+
+        .appointment-card {
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .appointment-card p {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 18px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 45%;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .cancel-button {
+            background-color: #e74c3c;
+        }
+
+        .cancel-button:hover {
+            background-color: #c0392b;
+        }
+
+        .back-button a {
+            text-decoration: none;
+            color: #3498db;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .back-button a:hover {
+            color: #2980b9;
+        }
+
+        .appointment-card button {
+            background-color: #e67e22;
+            width: 100%;
+        }
+
+        .appointment-card button:hover {
+            background-color: #d35400;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="appointment-details">
+        <h2>View Appointment</h2>
+
+        <div id="appointment-info" class="appointment-info">
+            <!-- Appointment info will be displayed here -->
+        </div>
+
+        <div class="back-button">
+            <a href="index.html">Go Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const appointmentInfoDiv = document.getElementById('appointment-info');
+
+            // Get appointment data from localStorage
+            let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+
+            // Display all appointments if available
+            if (appointments.length > 0) {
+                let appointmentsHTML = '';
+                appointments.forEach((appointment, index) => {
+                    appointmentsHTML += `
+                        <div class="appointment-card">
+                            <p><strong>Doctor:</strong> ${appointment.doctor}</p>
+                            <p><strong>Day:</strong> ${appointment.day}</p>
+                            <p><strong>Time:</strong> ${appointment.time}</p>
+                            <div class="buttons">
+                                <button class="cancel-button" onclick="cancelAppointment(${index})">Cancel Appointment</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                appointmentInfoDiv.innerHTML = appointmentsHTML;
+            } else {
+                // If no appointments are stored in localStorage
+                appointmentInfoDiv.innerHTML = '<p>No appointments found.</p>';
+            }
+
+            // Function to handle cancellation of appointment
+            window.cancelAppointment = function(index) {
+                appointments.splice(index, 1); // Remove the appointment at the given index
+                localStorage.setItem('appointments', JSON.stringify(appointments)); // Update localStorage
+
+                // Reload the page to reflect the changes
+                window.location.reload();
+            };
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Appointment</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .appointment-form {
+            background: linear-gradient(145deg, #6e7c7c, #4a5c5c);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .appointment-form:hover {
+            transform: translateY(-10px);
+        }
+
+        .appointment-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 24px;
+            letter-spacing: 2px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #eee;
+            margin-bottom: 8px;
+        }
+
+        select, input[type="date"] {
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+            background-color: #fff;
+            color: #333;
+            transition: border 0.3s ease;
+        }
+
+        select:focus, input[type="date"]:focus {
+            border: 2px solid #5c6bc0;
+            outline: none;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #5c6bc0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4f5b99;
+        }
+
+        .back-button {
+            margin-top: 15px;
+        }
+
+        .back-button a {
+            text-decoration: none;
+            color: #5c6bc0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .back-button a:hover {
+            color: #3f4a83;
+        }
+    </style>
+</head>
+<body>
+    <div class="appointment-form">
+        <h2>Make Appointment</h2>
+
+        <label for="doctor-name">Doctor's Name:</label>
+        <select id="doctor-name" required>
+            <option value="" disabled selected>Select Doctor</option>
+            <option value="Dr. Smith">Dr. Smith</option>
+            <option value="Dr. Johnson">Dr. Johnson</option>
+            <option value="Dr. Lee">Dr. Lee</option>
+            <option value="Dr. Davis">Dr. Davis</option>
+        </select>
+
+        <label for="appointment-day">Select Day:</label>
+        <input type="date" id="appointment-day" required>
+
+        <label for="appointment-time">Select Time Slot:</label>
+        <select id="appointment-time" required>
+            <!-- Time slots will be dynamically added here -->
+        </select>
+
+        <button id="submit-appointment">Submit Appointment</button>
+
+        <div class="back-button">
+            <a href="index.html">Go Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            // Populate the time slots for 9 AM to 9 PM
+            const timeSelect = document.getElementById('appointment-time');
+
+            const startHour = 9; // 9 AM
+            const endHour = 21; // 9 PM
+
+            // Populate time slots
+            for (let hour = startHour; hour <= endHour; hour++) {
+                let timeOption = document.createElement('option');
+                let displayHour = hour <= 12 ? hour : hour - 12;
+                let period = hour < 12 ? "AM" : "PM";
+                timeOption.value = `${displayHour}:00 ${period}`;
+                timeOption.textContent = `${displayHour}:00 ${period}`;
+                timeSelect.appendChild(timeOption);
+            }
+
+            // Handle form submission
+            const submitButton = document.getElementById('submit-appointment');
+            submitButton.onclick = function() {
+                const doctorName = document.getElementById('doctor-name').value;
+                const appointmentDay = document.getElementById('appointment-day').value;
+                const appointmentTime = timeSelect.value;
+
+                if (!doctorName || !appointmentDay || !appointmentTime) {
+                    alert("Please fill in all fields!");
+                    return;
+                }
+
+                // Save the appointment data to localStorage
+                let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+                let newAppointment = {
+                    doctor: doctorName,
+                    day: appointmentDay,
+                    time: appointmentTime
+                };
+
+                // Check if the appointment already exists
+                const isAlreadyBooked = appointments.some((appointment) => {
+                    return appointment.day === newAppointment.day &&
+                           appointment.doctor === newAppointment.doctor &&
+                           appointment.time === newAppointment.time;
+                });
+
+                if (isAlreadyBooked) {
+                    alert("This appointment slot is already booked!");
+                } else {
+                    appointments.push(newAppointment);
+                    localStorage.setItem('appointments', JSON.stringify(appointments));
+                    alert("Appointment booked successfully!");
+                }
+            };
+        };
+    </script>
+</body>
+</html>
